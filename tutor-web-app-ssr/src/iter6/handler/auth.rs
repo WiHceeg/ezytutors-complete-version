@@ -6,6 +6,7 @@ use actix_web::{web, Error, HttpResponse, Result};
 use argon2::{self, Config};
 use serde_json::json;
 
+
 pub async fn show_register_form(tmpl: web::Data<tera::Tera>) -> Result<HttpResponse, Error> {
     let mut ctx = tera::Context::new();
     ctx.insert("error", "");
