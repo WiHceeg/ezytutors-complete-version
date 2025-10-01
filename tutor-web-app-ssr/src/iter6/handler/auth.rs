@@ -6,6 +6,13 @@ use actix_web::{web, Error, HttpResponse, Result};
 use argon2::{self, Config};
 use serde_json::json;
 
+pub async fn root_redirect() -> Result<HttpResponse, Error> {
+    Ok(
+        HttpResponse::Found()
+        .insert_header(("Location", "/signin"))
+        .finish()
+    )
+}
 
 pub async fn show_register_form(tmpl: web::Data<tera::Tera>) -> Result<HttpResponse, Error> {
     let mut ctx = tera::Context::new();

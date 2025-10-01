@@ -23,7 +23,7 @@ awc = "3.0.1"
 sqlx = {version = "0.6.2", default_features = false, features = ["postgres","runtime-tokio-native-tls", "macros"]}
 # Password hash
 rust-argon2 = "1.0.0"
-jsonwebtoken = "10.0.0"
+jsonwebtoken = { version = "10", features = ["aws_lc_rs"] }
 
 [dev-dependencies]
 # For automated tests
