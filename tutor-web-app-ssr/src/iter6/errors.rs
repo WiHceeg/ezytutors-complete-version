@@ -9,6 +9,7 @@ pub enum EzyTutorError {
     ActixError(String),
     NotFound(String),
     TeraError(String),
+    JwtError(String),
 }
 #[derive(Debug, Serialize)]
 pub struct AppErrorResponse {
@@ -35,10 +36,15 @@ impl EzyTutorError {
                 println!("Not found error occurred: {:?}", msg);
                 msg.into()
             }
+            EzyTutorError::JwtError(msg) => {
+                println!("JWT error occurred: {:?}", msg);
+                msg.into()
+            }
         }
     }
 }
 
+// 任何实现了 ResponseError 的类型都可以自动转换为 actix_web::Error
 impl error::ResponseError for EzyTutorError {
     fn status_code(&self) -> StatusCode {
         match self {
@@ -46,6 +52,7 @@ impl error::ResponseError for EzyTutorError {
             | EzyTutorError::ActixError(_msg)
             | EzyTutorError::TeraError(_msg) => StatusCode::INTERNAL_SERVER_ERROR,
             EzyTutorError::NotFound(_msg) => StatusCode::NOT_FOUND,
+            EzyTutorError::JwtError(_msg) => StatusCode::UNAUTHORIZED,
         }
     }
     fn error_response(&self) -> HttpResponse {
@@ -70,5 +77,11 @@ impl From<actix_web::error::Error> for EzyTutorError {
 impl From<SQLxError> for EzyTutorError {
     fn from(err: SQLxError) -> Self {
         EzyTutorError::DBError(err.to_string())
+    }
+}
+
+impl From<jsonwebtoken::errors::Error> for EzyTutorError {
+    fn from(err: jsonwebtoken::errors::Error) -> Self {
+        EzyTutorError::JwtError(err.to_string())
     }
 }

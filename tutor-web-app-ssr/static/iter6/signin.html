@@ -80,7 +80,7 @@
         <h2>
             Tutor sign in
         </h2>
-        <form action=/signin method=POST>       
+        <form action=/signin method=POST onsubmit="console.log('Signin form submitted');">
 
             <label for="userid">Enter username</label><br>            
             <input type="text" name="username" autocomplete="username" value="{{current_name}}" minlength="6"
@@ -91,7 +91,7 @@
             <label for="error">                                     
                 <p style="color:red">{{error}}</p>
             </label><br>
-            <button type=submit id="button2">Sign in</button>       
+            <button type=submit id="button1">Sign in</button>
 
         </form>
         <form action=/register method=GET>                                  

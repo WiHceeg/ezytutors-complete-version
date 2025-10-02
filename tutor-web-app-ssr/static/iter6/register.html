@@ -16,7 +16,7 @@
         <h2>
             Tutor registration
         </h2>
-        <form action=/register method=POST id="registerform">
+        <form action=/register method=POST id="registerform" onsubmit="console.log('Register form submitted');">
             <label for="userid">Enter username</label><br>
             <input type="text" name="username" value="{{current_username}}" autocomplete="username" minlength="6"
                 maxlength="12" required><br>

@@ -1,5 +1,6 @@
 use crate::dbaccess::{get_user_record, post_new_user};
 use crate::errors::EzyTutorError;
+use crate::iter6::jwt;
 use crate::iter6::state::AppState;
 use crate::model::{TutorRegisterForm, TutorResponse, TutorSigninForm, User};
 use actix_web::{web, Error, HttpResponse, Result};
@@ -7,6 +8,7 @@ use argon2::{self, Config};
 use serde_json::json;
 
 pub async fn root_redirect() -> Result<HttpResponse, Error> {
+    dbg!("root_redirect");
     Ok(
         HttpResponse::Found()
         .insert_header(("Location", "/signin"))
@@ -15,6 +17,8 @@ pub async fn root_redirect() -> Result<HttpResponse, Error> {
 }
 
 pub async fn show_register_form(tmpl: web::Data<tera::Tera>) -> Result<HttpResponse, Error> {
+    dbg!("show_register_form");
+
     let mut ctx = tera::Context::new();
     ctx.insert("error", "");
     ctx.insert("current_username", "");
@@ -36,6 +40,8 @@ pub async fn handle_register(
 ) -> Result<HttpResponse, Error> {
     let mut ctx = tera::Context::new();
     let s;
+    dbg!("handle_register");
+    dbg!(&params);
     let username = params.username.clone();
     let user = get_user_record(&app_state.db, username.to_string()).await;
     let user_not_found: bool = user.is_err();
@@ -97,6 +103,7 @@ pub async fn handle_register(
 }
 
 pub async fn show_signin_form(tmpl: web::Data<tera::Tera>) -> Result<HttpResponse, Error> {
+    dbg!("show_signin_form");
     let mut ctx = tera::Context::new();
     ctx.insert("error", "");
     ctx.insert("current_name", "");
@@ -115,6 +122,8 @@ pub async fn handle_signin(
 ) -> Result<HttpResponse, Error> {
     let mut ctx = tera::Context::new();
     let s;
+    dbg!("handle_signin");
+    dbg!(&params);
     let username = params.username.clone();
     let user = get_user_record(&app_state.db, username.to_string()).await;
     if let Ok(user) = user {
@@ -131,15 +140,30 @@ pub async fn handle_signin(
                 .render("signin.html", &ctx)
                 .map_err(|_| EzyTutorError::TeraError("Template error".to_string()))?;
         } else {
-            ctx.insert("name", &params.username);
-            ctx.insert("title", &"Signin confirmation!".to_owned());
-            ctx.insert(
-                "message",
-                &"You have successfully logged in to EzyTutor!".to_owned(),
+            // ctx.insert("name", &params.username);
+            // ctx.insert("title", &"Signin confirmation!".to_owned());
+            // ctx.insert(
+            //     "message",
+            //     &"You have successfully logged in to EzyTutor!".to_owned(),
+            // );
+            // s = tmpl
+            //     .render("user.html", &ctx)
+            //     .map_err(|_| EzyTutorError::TeraError("Template error".to_string()))?;
+            let tutor_id = user.tutor_id.unwrap_or(0);
+            dbg!(tutor_id);
+            let token = jwt::generate_jwt(&username, tutor_id).map_err(|_| EzyTutorError::JwtError("Failed to generate token".to_string()))?;
+            let cookie = actix_web::cookie::Cookie::build("jwt_token", token)
+                .path("/")
+                .secure(false)
+                .http_only(true)
+                .finish();
+            dbg!(&cookie);
+            return Ok(
+                HttpResponse::SeeOther()
+                .cookie(cookie)
+                .append_header(("Location", "/courses"))
+                .finish()
             );
-            s = tmpl
-                .render("user.html", &ctx)
-                .map_err(|_| EzyTutorError::TeraError("Template error".to_string()))?;
         }
     } else {
         ctx.insert("error", "User id not found");

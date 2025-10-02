@@ -25,6 +25,7 @@ async fn main() -> std::io::Result<()> {
         let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/static/iter6/**/*")).unwrap();
 
         App::new()
+            .wrap(actix_web::middleware::Logger::default()) // 添加日志中间件
             .app_data(Data::new(tera))
             .app_data(shared_data.clone())
             .configure(course_config)
