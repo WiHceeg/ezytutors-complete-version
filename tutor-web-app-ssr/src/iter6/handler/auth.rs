@@ -1,19 +1,35 @@
 use crate::dbaccess::{get_user_record, post_new_user};
 use crate::errors::EzyTutorError;
-use crate::iter6::jwt;
+use crate::iter6::jwt::{self, get_username_from_token};
 use crate::iter6::state::AppState;
 use crate::model::{TutorRegisterForm, TutorResponse, TutorSigninForm, User};
 use actix_web::{web, Error, HttpResponse, Result};
 use argon2::{self, Config};
+use awc::cookie;
 use serde_json::json;
 
-pub async fn root_redirect() -> Result<HttpResponse, Error> {
-    dbg!("root_redirect");
-    Ok(
-        HttpResponse::Found()
-        .insert_header(("Location", "/signin"))
-        .finish()
-    )
+pub async fn home(tmpl: web::Data<tera::Tera>, req: actix_web::HttpRequest) -> Result<HttpResponse, Error> {
+    dbg!("home");
+
+    let option_cookie = req.cookie("jwt_token");
+
+    if option_cookie.is_none() {
+        return Ok(
+            HttpResponse::Found()
+            .insert_header(("Location", "/signin"))
+            .finish()
+        );
+    }
+
+    let cookie = option_cookie.unwrap();
+    let user_name = get_username_from_token(cookie.value())
+        .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
+    let mut ctx = tera::Context::new();
+    ctx.insert("name", &user_name);
+    let s = tmpl
+        .render("home.html", &ctx)
+        .map_err(|_| EzyTutorError::TeraError("Template error".to_string()))?;
+    Ok(HttpResponse::Ok().content_type("text/html").body(s))
 }
 
 pub async fn show_register_form(tmpl: web::Data<tera::Tera>) -> Result<HttpResponse, Error> {
@@ -140,15 +156,7 @@ pub async fn handle_signin(
                 .render("signin.html", &ctx)
                 .map_err(|_| EzyTutorError::TeraError("Template error".to_string()))?;
         } else {
-            // ctx.insert("name", &params.username);
-            // ctx.insert("title", &"Signin confirmation!".to_owned());
-            // ctx.insert(
-            //     "message",
-            //     &"You have successfully logged in to EzyTutor!".to_owned(),
-            // );
-            // s = tmpl
-            //     .render("user.html", &ctx)
-            //     .map_err(|_| EzyTutorError::TeraError("Template error".to_string()))?;
+
             let tutor_id = user.tutor_id.unwrap_or(0);
             dbg!(tutor_id);
             let token = jwt::generate_jwt(&username, tutor_id).map_err(|_| EzyTutorError::JwtError("Failed to generate token".to_string()))?;

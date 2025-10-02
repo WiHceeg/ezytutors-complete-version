@@ -1,5 +1,5 @@
-use crate::handler::auth::{handle_register, handle_signin, show_register_form, show_signin_form, root_redirect};
-use crate::handler::course::{handle_delete_course, handle_insert_course, handle_update_course};
+use crate::handler::auth::{handle_register, handle_signin, show_register_form, show_signin_form, home};
+use crate::handler::course::{handle_delete_course, handle_insert_course, handle_update_course, show_courses_list};
 
 use actix_files as fs;
 use actix_web::web;
@@ -8,7 +8,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
     config.service(
         web::scope("")
             .service(fs::Files::new("/static", "./static").show_files_listing())
-            .service(web::resource("/").route(web::get().to(root_redirect)))
+            .service(web::resource("/").route(web::get().to(home)))
             
             .service(
                 web::resource("/register")
@@ -28,6 +28,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
 pub fn course_config(config: &mut web::ServiceConfig) {
     config.service(
         web::scope("/courses")
+            .service(web::resource("/").route(web::get().to(show_courses_list)))
             .service(web::resource("new/{tutor_id}").route(web::post().to(handle_insert_course)))
             .service(
                 web::resource("{tutor_id}/{course_id}").route(web::put().to(handle_update_course)),

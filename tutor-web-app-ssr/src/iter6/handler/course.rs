@@ -3,6 +3,14 @@ use crate::state::AppState;
 use actix_web::{web, Error, HttpResponse, Result};
 use serde_json::json;
 
+pub async fn show_courses_list(
+    tmpl: web::Data<tera::Tera>,
+    req: actix_web::HttpRequest,
+) -> Result<HttpResponse, Error> {
+
+    todo!()
+}
+
 pub async fn handle_insert_course(
     _tmpl: web::Data<tera::Tera>,
     _app_state: web::Data<AppState>,
