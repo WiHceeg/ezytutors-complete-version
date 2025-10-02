@@ -10,11 +10,17 @@ pub fn app_config(config: &mut web::ServiceConfig) {
             .service(fs::Files::new("/static", "./static").show_files_listing())
             .service(web::resource("/").route(web::get().to(root_redirect)))
             
-            .service(web::resource("/register").route(web::get().to(show_register_form)))
-            .service(web::resource("/register").route(web::post().to(handle_register)))
+            .service(
+                web::resource("/register")
+                    .route(web::get().to(show_register_form))
+                    .route(web::post().to(handle_register))
+            )
 
-            .service(web::resource("/signin").route(web::get().to(show_signin_form)))
-            .service(web::resource("/signin").route(web::post().to(handle_signin)))
+            .service(
+                web::resource("/signin")
+                    .route(web::get().to(show_signin_form))
+                    .route(web::post().to(handle_signin))
+            )
             
     );
 }
