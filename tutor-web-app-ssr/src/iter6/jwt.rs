@@ -34,3 +34,8 @@ pub fn get_username_from_token(token: &str) -> Result<String, jsonwebtoken::erro
     let claims = validate_jwt(token)?;
     Ok(claims.sub)
 }
+
+pub fn get_tutor_id_from_token(token: &str) -> Result<i32, jsonwebtoken::errors::Error> {
+    let claims = validate_jwt(token)?;
+    Ok(claims.tutur_id)
+}

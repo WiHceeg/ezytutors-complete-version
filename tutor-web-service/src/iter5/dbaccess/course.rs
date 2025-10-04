@@ -15,7 +15,7 @@ pub async fn get_courses_for_tutor_db(
     )
     .fetch_all(pool)
     .await?;
-
+    dbg!(&course_rows);
     Ok(course_rows)
 }
 

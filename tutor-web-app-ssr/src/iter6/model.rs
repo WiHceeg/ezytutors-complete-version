@@ -32,6 +32,41 @@ pub struct TutorSigninForm {
     pub password: String,
 }
 
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct GetCourseResponse {
+    pub course_id: i32,
+    pub tutor_id: i32,
+    pub course_name: String,
+    pub course_description: String,
+    pub course_format: String,
+    pub course_structure: Option<String>,
+    pub course_duration: String,
+    pub course_price: Option<i32>,
+    pub course_language: Option<String>,
+    pub course_level: Option<String>,
+    pub posted_time: String,
+}
+
+impl From<web::Json<GetCourseResponse>> for GetCourseResponse {
+    fn from(get_course: web::Json<GetCourseResponse>) -> Self {
+        GetCourseResponse {
+            tutor_id: get_course.tutor_id,
+            course_id: get_course.course_id,
+            course_name: get_course.course_name.clone(),
+            course_description: get_course.course_description.clone(),
+            course_format: get_course.course_format.clone(),
+            course_structure: get_course.course_structure.clone(),
+            course_duration: get_course.course_duration.clone(),
+            course_price: get_course.course_price,
+            course_language: get_course.course_language.clone(),
+            course_level: get_course.course_level.clone(),
+            posted_time: get_course.posted_time.clone(),
+        }
+    }
+}
+
+
 // Struct to hold user-provided details to create a new course
 #[derive(Deserialize, Debug, Clone)]
 pub struct NewCourse {

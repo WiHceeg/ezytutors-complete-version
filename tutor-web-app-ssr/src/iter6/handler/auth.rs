@@ -169,7 +169,7 @@ pub async fn handle_signin(
             return Ok(
                 HttpResponse::SeeOther()
                 .cookie(cookie)
-                .append_header(("Location", "/courses"))
+                .append_header(("Location", "/courses/"))
                 .finish()
             );
         }

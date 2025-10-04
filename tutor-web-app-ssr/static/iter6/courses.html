@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Courses List</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Course ID</th>
+                <th>Tutor ID</th>
+                <th>Course Name</th>
+                <th>Course Description</th>
+                <th>Course Format</th>
+                <th>Course Structure</th>
+                <th>Course Duration</th>
+                <th>Course Price</th>
+                <th>Course Language</th>
+                <th>Course Level</th>
+                <th>Posted Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.course_id }}</td>
+                <td>{{ course.tutor_id }}</td>
+                <td>{{ course.course_name }}</td>
+                <td>{{ course.course_description }}</td>
+                <td>{{ course.course_format }}</td>
+                <td>{{ course.course_structure }}</td> <!-- 处理 Option 字段 -->
+                <td>{{ course.course_duration }}</td>
+                <td>{{ course.course_price }}</td> <!-- 处理 Option 字段 -->
+                <td>{{ course.course_language }}</td> <!-- 处理 Option 字段 -->
+                <td>{{ course.course_level }}</td> <!-- 处理 Option 字段 -->
+                <td>{{ course.posted_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

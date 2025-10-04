@@ -1,6 +1,10 @@
-use crate::model::{NewCourse, NewCourseResponse, UpdateCourse, UpdateCourseResponse};
+use crate::model::{NewCourse, GetCourseResponse, NewCourseResponse, UpdateCourse, UpdateCourseResponse};
 use crate::state::AppState;
+use crate::iter6::jwt::{self, get_tutor_id_from_token};
+use crate::errors::EzyTutorError;
+
 use actix_web::{web, Error, HttpResponse, Result};
+use awc::Client;
 use serde_json::json;
 
 pub async fn show_courses_list(
@@ -8,7 +12,42 @@ pub async fn show_courses_list(
     req: actix_web::HttpRequest,
 ) -> Result<HttpResponse, Error> {
 
-    todo!()
+    let option_cookie = req.cookie("jwt_token");
+
+    if option_cookie.is_none() {
+        return Ok(
+            HttpResponse::Found()
+            .insert_header(("Location", "/signin"))
+            .finish()
+        );
+    }
+
+    let cookie = option_cookie.unwrap();
+    let tutor_id = get_tutor_id_from_token(cookie.value())
+        .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
+
+    dbg!(&tutor_id);
+
+
+    let client = Client::default();
+    let responce = client
+        .get(format!("http://localhost:3000/courses/{}", tutor_id))
+        .send()
+        .await
+        .unwrap()
+        .body()
+        .await
+        .unwrap();
+    let str_list = std::str::from_utf8(&responce.as_ref()).unwrap();
+    dbg!(&str_list);
+    let courses_list: Vec<GetCourseResponse> = serde_json::from_str(str_list).unwrap();
+
+    let mut ctx = tera::Context::new();
+    ctx.insert("courses", &courses_list);
+    let s = tmpl
+        .render("courses.html", &ctx)
+        .map_err(|_| EzyTutorError::TeraError("TemplateError".to_string()))?;
+    Ok(HttpResponse::Ok().content_type("text/html").body(s))
 }
 
 pub async fn handle_insert_course(
