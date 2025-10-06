@@ -33,11 +33,11 @@
                 <td>{{ course.course_name }}</td>
                 <td>{{ course.course_description }}</td>
                 <td>{{ course.course_format }}</td>
-                <td>{{ course.course_structure }}</td> <!-- 处理 Option 字段 -->
+                <td>{{ course.course_structure }}</td>
                 <td>{{ course.course_duration }}</td>
-                <td>{{ course.course_price }}</td> <!-- 处理 Option 字段 -->
-                <td>{{ course.course_language }}</td> <!-- 处理 Option 字段 -->
-                <td>{{ course.course_level }}</td> <!-- 处理 Option 字段 -->
+                <td>{{ course.course_price }}</td>
+                <td>{{ course.course_language }}</td>
+                <td>{{ course.course_level }}</td>
                 <td>{{ course.posted_time }}</td>
             </tr>
             {% endfor %}
@@ -48,28 +48,28 @@
         <form id="CreateCourse">
 
             <label for="course_name">course_name: </label>
-            <input type="text" id="course_name" name="course_name" required><br><br>
+            <input type="text" name="course_name" required><br><br>
 
             <label for="course_description">course_description: </label>
-            <input type="text" id="course_description" name="course_description"><br><br>
+            <input type="text" name="course_description"><br><br>
 
             <label for="course_format">course_format: </label>
-            <input type="text" id="course_format" name="course_format" required><br><br>
+            <input type="text" name="course_format" required><br><br>
 
             <label for="course_structure">course_structure: </label>
-            <input type="text" id="course_structure" name="course_structure"><br><br>
+            <input type="text" name="course_structure"><br><br>
 
             <label for="course_duration">course_duration: </label>
-            <input type="text" id="course_duration" name="course_duration" required><br><br>
+            <input type="text" name="course_duration" required><br><br>
 
             <label for="course_price">course_price: </label>
-            <input type="number" id="course_price" name="course_price" min="0" max="10000000" step="1"><br><br>
+            <input type="number" name="course_price" min="0" max="10000000" step="1"><br><br>
 
             <label for="course_language">course_language: </label>
-            <input type="text" id="course_language" name="course_language"><br><br>
+            <input type="text" name="course_language"><br><br>
 
             <label for="course_level">course_level: </label>
-            <input type="text" id="course_level" name="course_level"><br><br>
+            <input type="text" name="course_level"><br><br>
 
 
             <button type="submit">CreateCourse</button>
@@ -79,34 +79,43 @@
     <div style="border: 1px solid black;">
         <form id="UpdateCourse">
             <label for="course_id">course_id: </label>
-            <input type="text" id="course_id" name="course_id" required><br><br>
+            <input type="text" name="course_id" required><br><br>
 
             <label for="course_name">course_name: </label>
-            <input type="text" id="course_name" name="course_name"><br><br>
+            <input type="text"  name="course_name"><br><br>
 
             <label for="course_description">course_description: </label>
-            <input type="text" id="course_description" name="course_description"><br><br>
+            <input type="text" name="course_description"><br><br>
 
             <label for="course_format">course_format: </label>
-            <input type="text" id="course_format" name="course_format"><br><br>
+            <input type="text" name="course_format"><br><br>
 
             <label for="course_structure">course_structure: </label>
-            <input type="text" id="course_structure" name="course_structure"><br><br>
+            <input type="text" name="course_structure"><br><br>
 
             <label for="course_duration">course_duration: </label>
-            <input type="text" id="course_duration" name="course_duration"><br><br>
+            <input type="text" name="course_duration"><br><br>
 
             <label for="course_price">course_price: </label>
-            <input type="number" id="course_price" name="course_price" min="0" max="10000000" step="1"><br><br>
+            <input type="number" name="course_price" min="0" max="10000000" step="1"><br><br>
 
             <label for="course_language">course_language: </label>
-            <input type="text" id="course_language" name="course_language"><br><br>
+            <input type="text" name="course_language"><br><br>
 
             <label for="course_level">course_level: </label>
-            <input type="text" id="course_level" name="course_level"><br><br>
+            <input type="text" name="course_level"><br><br>
 
 
             <button type="submit">UpdateCourse</button>
+        </form>
+    </div>
+
+    <div style="border: 1px solid black;">
+        <form id="DeleteCourse">
+            <label for="course_id">course_id: </label>
+            <input type="text" id="delete_course_id" name="course_id" required><br><br>
+        
+            <button type="submit">DeleteCourse</button>
         </form>
     </div>
 
