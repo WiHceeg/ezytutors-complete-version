@@ -41,5 +41,39 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <div>
+        <form id="CreateCourse">
+
+            <label for="course_name">course_name: </label>
+            <input type="text" id="course_name" name="course_name" required><br><br>
+        
+            <label for="course_description">course_description: </label>
+            <input type="text" id="course_description" name="course_description"><br><br>
+
+            <label for="course_format">course_format: </label>
+            <input type="text" id="course_format" name="course_format" required><br><br>
+
+            <label for="course_structure">course_structure: </label>
+            <input type="text" id="course_structure" name="course_structure"><br><br>
+
+            <label for="course_duration">course_duration: </label>
+            <input type="text" id="course_duration" name="course_duration" required><br><br>
+                        
+            <label for="course_price">course_price: </label>
+            <input type="number" id="course_price" name="course_price" min="0" max="10000000" step="1"><br><br>
+
+            <label for="course_language">course_language: </label>
+            <input type="text" id="course_language" name="course_language"><br><br>
+
+            <label for="course_level">course_level: </label>
+            <input type="text" id="course_level" name="course_level"><br><br>
+
+
+            <button type="submit">CreateCourse</button>
+        </form>
+    </div>
+
+    <script src="/static/courses.js"></script>
 </body>
 </html>

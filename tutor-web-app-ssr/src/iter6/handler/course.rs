@@ -23,6 +23,7 @@ pub async fn show_courses_list(
     }
 
     let cookie = option_cookie.unwrap();
+    // for safety，tutor_id need from jwt
     let tutor_id = get_tutor_id_from_token(cookie.value())
         .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
 
@@ -69,6 +70,9 @@ pub async fn handle_insert_course(
         "course_level": &params.course_level
 
     });
+    dbg!("handle_insert_course");
+    dbg!(&tutor_id);
+    dbg!(&new_course);
     let awc_client = awc::Client::default();
     let res = awc_client
         .post("http://localhost:3000/courses/")
