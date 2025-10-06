@@ -93,6 +93,10 @@ pub async fn handle_update_course(
     params: web::Json<UpdateCourse>,
 ) -> Result<HttpResponse, Error> {
     let (tutor_id, course_id) = path.into_inner();
+    dbg!("handle_update_course");
+    dbg!(&tutor_id);
+    dbg!(&course_id);
+
     let update_course = json!({
         "course_name": &params.course_name,
         "course_description": &params.course_description,
