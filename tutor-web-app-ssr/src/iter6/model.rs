@@ -32,7 +32,6 @@ pub struct TutorSigninForm {
     pub password: String,
 }
 
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GetCourseResponse {
     pub course_id: i32,
@@ -65,7 +64,6 @@ impl From<web::Json<GetCourseResponse>> for GetCourseResponse {
         }
     }
 }
-
 
 // Struct to hold user-provided details to create a new course
 #[derive(Deserialize, Debug, Clone)]

@@ -1,15 +1,13 @@
-use actix_web::web::to;
-use serde::{Serialize, Deserialize};
-use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey};
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
+use serde::{Deserialize, Serialize};
 
 /// Our claims struct, it needs to derive `Serialize` and/or `Deserialize`
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
-    pub sub: String,    // usename
+    pub sub: String, // usename
     pub tutur_id: i32,
     pub exp: usize,
 }
-
 
 const JWT_SECRET: &str = "ezytutors_secret";
 
@@ -22,11 +20,19 @@ pub fn generate_jwt(username: &str, tutor_id: i32) -> Result<String, jsonwebtoke
         exp: exp.timestamp() as usize,
     };
 
-    encode(&Header::default(), &claims, &EncodingKey::from_secret(JWT_SECRET.as_ref()))
+    encode(
+        &Header::default(),
+        &claims,
+        &EncodingKey::from_secret(JWT_SECRET.as_ref()),
+    )
 }
 
 pub fn validate_jwt(token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
-    let token_data = decode::<Claims>(&token, &DecodingKey::from_secret(JWT_SECRET.as_ref()), &Validation::default())?;
+    let token_data = decode::<Claims>(
+        &token,
+        &DecodingKey::from_secret(JWT_SECRET.as_ref()),
+        &Validation::default(),
+    )?;
     Ok(token_data.claims)
 }
 

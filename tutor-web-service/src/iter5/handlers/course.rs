@@ -29,7 +29,7 @@ curl -X PUT localhost:3000/courses/1/5 -H "Content-Type: application/json"  -d '
 pub async fn update_course_details(
     app_state: web::Data<AppState>,
     update_course: web::Json<UpdateCourse>,
-     /*web::Path((tutor_id, course_id))*/ path: web::Path<(i32, i32)>,
+    /*web::Path((tutor_id, course_id))*/ path: web::Path<(i32, i32)>,
 ) -> Result<HttpResponse, EzyTutorError> {
     let (tutor_id, course_id) = path.into_inner();
     update_course_details_db(&app_state.db, tutor_id, course_id, update_course.into())

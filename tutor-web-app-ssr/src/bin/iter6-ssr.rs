@@ -1,7 +1,7 @@
 #[path = "../iter6/mod.rs"]
 mod iter6;
-use actix_web::{web, App, HttpServer};
 use actix_web::web::Data;
+use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use iter6::{dbaccess, errors, handler, model, routes, state};
 use routes::{app_config, course_config};

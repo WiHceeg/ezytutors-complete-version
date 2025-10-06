@@ -5,20 +5,20 @@ use crate::iter6::state::AppState;
 use crate::model::{TutorRegisterForm, TutorResponse, TutorSigninForm, User};
 use actix_web::{web, Error, HttpResponse, Result};
 use argon2::{self, Config};
-use awc::cookie;
 use serde_json::json;
 
-pub async fn home(tmpl: web::Data<tera::Tera>, req: actix_web::HttpRequest) -> Result<HttpResponse, Error> {
+pub async fn home(
+    tmpl: web::Data<tera::Tera>,
+    req: actix_web::HttpRequest,
+) -> Result<HttpResponse, Error> {
     dbg!("home");
 
     let option_cookie = req.cookie("jwt_token");
 
     if option_cookie.is_none() {
-        return Ok(
-            HttpResponse::Found()
+        return Ok(HttpResponse::Found()
             .insert_header(("Location", "/signin"))
-            .finish()
-        );
+            .finish());
     }
 
     let cookie = option_cookie.unwrap();
@@ -156,28 +156,27 @@ pub async fn handle_signin(
                 .render("signin.html", &ctx)
                 .map_err(|_| EzyTutorError::TeraError("Template error".to_string()))?;
         } else {
-
             let tutor_id = user.tutor_id.unwrap_or(0);
-            let tutor_id_cookie = actix_web::cookie::Cookie::build("tutor_id", tutor_id.to_string())
-                .path("/")
-                .secure(false)
-                .http_only(false)
-                .finish();
+            let tutor_id_cookie =
+                actix_web::cookie::Cookie::build("tutor_id", tutor_id.to_string())
+                    .path("/")
+                    .secure(false)
+                    .http_only(false)
+                    .finish();
             dbg!(tutor_id);
-            let token = jwt::generate_jwt(&username, tutor_id).map_err(|_| EzyTutorError::JwtError("Failed to generate token".to_string()))?;
+            let token = jwt::generate_jwt(&username, tutor_id)
+                .map_err(|_| EzyTutorError::JwtError("Failed to generate token".to_string()))?;
             let jwt_cookie = actix_web::cookie::Cookie::build("jwt_token", token)
                 .path("/")
                 .secure(false)
                 .http_only(true)
                 .finish();
             dbg!(&jwt_cookie);
-            return Ok(
-                HttpResponse::SeeOther()
+            return Ok(HttpResponse::SeeOther()
                 .cookie(jwt_cookie)
                 .cookie(tutor_id_cookie)
                 .append_header(("Location", "/"))
-                .finish()
-            );
+                .finish());
         }
     } else {
         ctx.insert("error", "User id not found");

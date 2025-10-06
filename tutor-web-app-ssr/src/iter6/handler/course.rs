@@ -1,7 +1,9 @@
-use crate::model::{NewCourse, GetCourseResponse, NewCourseResponse, UpdateCourse, UpdateCourseResponse};
-use crate::state::AppState;
-use crate::iter6::jwt::{self, get_tutor_id_from_token};
 use crate::errors::EzyTutorError;
+use crate::iter6::jwt::{self, get_tutor_id_from_token};
+use crate::model::{
+    GetCourseResponse, NewCourse, NewCourseResponse, UpdateCourse, UpdateCourseResponse,
+};
+use crate::state::AppState;
 
 use actix_web::{web, Error, HttpResponse, Result};
 use awc::Client;
@@ -11,15 +13,12 @@ pub async fn show_courses_list(
     tmpl: web::Data<tera::Tera>,
     req: actix_web::HttpRequest,
 ) -> Result<HttpResponse, Error> {
-
     let option_cookie = req.cookie("jwt_token");
 
     if option_cookie.is_none() {
-        return Ok(
-            HttpResponse::Found()
+        return Ok(HttpResponse::Found()
             .insert_header(("Location", "/signin"))
-            .finish()
-        );
+            .finish());
     }
 
     let cookie = option_cookie.unwrap();
@@ -28,7 +27,6 @@ pub async fn show_courses_list(
         .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
 
     dbg!(&tutor_id);
-
 
     let client = Client::default();
     let responce = client
