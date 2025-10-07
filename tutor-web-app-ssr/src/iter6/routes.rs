@@ -4,6 +4,7 @@ use crate::handler::auth::{
 use crate::handler::course::{
     handle_delete_course, handle_insert_course, handle_update_course, show_courses_list,
 };
+use crate::handler::profile::show_tutor_profile;
 
 use actix_files as fs;
 use actix_web::web;
@@ -41,4 +42,12 @@ pub fn course_config(config: &mut web::ServiceConfig) {
                     .route(web::delete().to(handle_delete_course)),
             ),
     );
+}
+
+pub fn profile_config(config: &mut web::ServiceConfig) {
+    config.service(
+        web::scope("/profile")
+            .service(web::resource("/").route(web::get().to(show_tutor_profile)))
+
+        );
 }
