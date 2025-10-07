@@ -5,7 +5,6 @@ use crate::model::{
 };
 use crate::state::AppState;
 
-use actix_web::mime::HTML;
 use actix_web::{web, Error, HttpResponse, Result};
 use awc::Client;
 use serde_json::json;
