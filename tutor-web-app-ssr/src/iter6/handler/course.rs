@@ -5,6 +5,7 @@ use crate::model::{
 };
 use crate::state::AppState;
 
+use actix_web::mime::HTML;
 use actix_web::{web, Error, HttpResponse, Result};
 use awc::Client;
 use serde_json::json;
@@ -14,18 +15,15 @@ pub async fn show_courses_list(
     req: actix_web::HttpRequest,
 ) -> Result<HttpResponse, Error> {
     let option_cookie = req.cookie("jwt_token");
-
     if option_cookie.is_none() {
         return Ok(HttpResponse::Found()
             .insert_header(("Location", "/signin"))
             .finish());
     }
-
     let cookie = option_cookie.unwrap();
     // for safety，tutor_id need from jwt
     let tutor_id = get_tutor_id_from_token(cookie.value())
         .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
-
     dbg!(&tutor_id);
 
     let client = Client::default();
@@ -53,9 +51,26 @@ pub async fn handle_insert_course(
     _tmpl: web::Data<tera::Tera>,
     _app_state: web::Data<AppState>,
     /*web::Path(tutor_id)*/ path: web::Path<i32>,
+    req: actix_web::HttpRequest,
     params: web::Json<NewCourse>,
 ) -> Result<HttpResponse, Error> {
+    let option_cookie = req.cookie("jwt_token");
+    if option_cookie.is_none() {
+        return Ok(HttpResponse::Found()
+            .insert_header(("Location", "/signin"))
+            .finish());
+    }
+    let cookie = option_cookie.unwrap();
+    // for safety，tutor_id need from jwt
+    let tutor_id_from_jwt = get_tutor_id_from_token(cookie.value())
+        .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
+    dbg!(&tutor_id_from_jwt);
+
     let tutor_id = path.into_inner();
+    if tutor_id_from_jwt != tutor_id {
+        return Ok(HttpResponse::BadRequest().finish());
+    }
+
     let new_course = json!({
         "tutor_id": tutor_id,
         "course_name": &params.course_name,
@@ -88,9 +103,26 @@ pub async fn handle_update_course(
     _tmpl: web::Data<tera::Tera>,
     _app_state: web::Data<AppState>,
     /*web::Path((tutor_id, course_id))*/ path: web::Path<(i32, i32)>,
+    req: actix_web::HttpRequest,
     params: web::Json<UpdateCourse>,
 ) -> Result<HttpResponse, Error> {
+    let option_cookie = req.cookie("jwt_token");
+    if option_cookie.is_none() {
+        return Ok(HttpResponse::Found()
+            .insert_header(("Location", "/signin"))
+            .finish());
+    }
+    let cookie = option_cookie.unwrap();
+    // for safety，tutor_id need from jwt
+    let tutor_id_from_jwt = get_tutor_id_from_token(cookie.value())
+        .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
+    dbg!(&tutor_id_from_jwt);
+
     let (tutor_id, course_id) = path.into_inner();
+    if tutor_id_from_jwt != tutor_id {
+        return Ok(HttpResponse::BadRequest().finish());
+    }
+
     dbg!("handle_update_course");
     dbg!(&tutor_id);
     dbg!(&course_id);
@@ -124,9 +156,27 @@ pub async fn handle_update_course(
 pub async fn handle_delete_course(
     _tmpl: web::Data<tera::Tera>,
     _app_state: web::Data<AppState>,
+    req: actix_web::HttpRequest,
     /*web::Path((tutor_id, course_id))*/ path: web::Path<(i32, i32)>,
 ) -> Result<HttpResponse, Error> {
+    let option_cookie = req.cookie("jwt_token");
+    if option_cookie.is_none() {
+        return Ok(HttpResponse::Found()
+            .insert_header(("Location", "/signin"))
+            .finish());
+    }
+    let cookie = option_cookie.unwrap();
+    // for safety，tutor_id need from jwt
+    let tutor_id_from_jwt = get_tutor_id_from_token(cookie.value())
+        .map_err(|_| EzyTutorError::JwtError("Invalid token".to_string()))?;
+    dbg!(&tutor_id_from_jwt);
+
     let (tutor_id, course_id) = path.into_inner();
+    if tutor_id_from_jwt != tutor_id {
+        return Ok(HttpResponse::BadRequest().finish());
+    }
+    dbg!(&tutor_id);
+
     let awc_client = awc::Client::default();
     let delete_url = format!("http://localhost:3000/courses/{}/{}", tutor_id, course_id);
     let _res = awc_client.delete(delete_url).send().await.unwrap();
