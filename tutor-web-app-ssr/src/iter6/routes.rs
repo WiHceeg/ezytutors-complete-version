@@ -1,5 +1,5 @@
 use crate::handler::auth::{
-    handle_register, handle_signin, home, show_register_form, show_signin_form,
+    handle_register, handle_signin, handle_signout, home, show_register_form, show_signin_form,
 };
 use crate::handler::course::{
     handle_delete_course, handle_insert_course, handle_update_course, show_courses_list,
@@ -22,7 +22,9 @@ pub fn app_config(config: &mut web::ServiceConfig) {
                 web::resource("/signin")
                     .route(web::get().to(show_signin_form))
                     .route(web::post().to(handle_signin)),
-            ),
+            )
+            .service(web::resource("/signout").route(web::get().to(handle_signout)))
+            ,
     );
 }
 

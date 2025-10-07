@@ -189,3 +189,25 @@ pub async fn handle_signin(
 
     Ok(HttpResponse::Ok().content_type("text/html").body(s))
 }
+
+pub async fn handle_signout() -> Result<HttpResponse, Error> {
+    let expired_jwt_cookie = actix_web::cookie::Cookie::build("jwt_token", "")
+        .path("/")
+        .secure(false)
+        .http_only(true)
+        .max_age(time::Duration::seconds(0))
+        .finish();
+    
+    let expired_tutor_id_cookie = actix_web::cookie::Cookie::build("tutor_id", "")
+        .path("/")
+        .secure(false)
+        .http_only(false)
+        .max_age(time::Duration::seconds(0))
+        .finish();
+
+    Ok(HttpResponse::SeeOther()
+        .cookie(expired_jwt_cookie)
+        .cookie(expired_tutor_id_cookie)
+        .append_header(("Location", "/signin"))
+        .finish())
+}
